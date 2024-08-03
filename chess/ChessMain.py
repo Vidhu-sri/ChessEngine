@@ -39,10 +39,10 @@ def main():
                 running = False
             
             #try drag and drop also 
-            if e.type == p.event.MOUSEBUTTONDOWN:
+            if e.type == p.MOUSEBUTTONDOWN:
                 pos = p.mouse.get_pos()
-                row = pos[0]//SQ_SIZE
-                col = pos[1]//SQ_SIZE
+                row = pos[1]//SQ_SIZE
+                col = pos[0]//SQ_SIZE
                 if (row,col) == sqSelected:
                     sqSelected = ()
                     playerClicks = []
@@ -50,7 +50,12 @@ def main():
                     sqSelected = (row,col)
                     playerClicks.append(sqSelected)
                 if len(playerClicks) ==2:
-                    pass
+                    move = ChessEngine.Move(playerClicks[0],playerClicks[1],gs.board)
+                    print(move.getChessNotation())
+                    gs.makemove(move)
+                    sqSelected = ()
+                    playerClicks = []
+
 
 
 
