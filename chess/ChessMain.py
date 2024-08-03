@@ -30,10 +30,31 @@ def main():
     gs = ChessEngine.GameState()
     loadImages()
     running = True
+
+    sqSelected = ()
+    playerClicks= []
     while running:
         for e in p.event.get():
             if e.type == p.QUIT:
                 running = False
+            
+            #try drag and drop also 
+            if e.type == p.event.MOUSEBUTTONDOWN:
+                pos = p.mouse.get_pos()
+                row = pos[0]//SQ_SIZE
+                col = pos[1]//SQ_SIZE
+                if (row,col) == sqSelected:
+                    sqSelected = ()
+                    playerClicks = []
+                else:
+                    sqSelected = (row,col)
+                    playerClicks.append(sqSelected)
+                if len(playerClicks) ==2:
+                    pass
+
+
+
+
 
         drawGameState(screen,gs)
         drawPieces(screen,gs.board)
