@@ -29,6 +29,7 @@ class GameState:
         self.board[move.endrow][move.endcol] = move.pieceMoved
         self.movelog.append(move)
         self.whiteToMove = not self.whiteToMove
+    
 
 
 
