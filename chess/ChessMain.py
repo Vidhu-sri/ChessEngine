@@ -33,6 +33,7 @@ def main():
 
     sqSelected = ()
     playerClicks= []
+ 
     while running:
         for e in p.event.get():
             if e.type == p.QUIT:
@@ -55,14 +56,14 @@ def main():
                     gs.makemove(move)
                     sqSelected = ()
                     playerClicks = []
-
+                   
 
 
 
 
 
         drawGameState(screen,gs)
-        drawPieces(screen,gs.board)
+        #drawPieces(screen,gs.board)
         clock.tick(MAX_FPS)
         p.display.flip()
 def drawGameState(screen,gs):

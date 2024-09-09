@@ -39,14 +39,14 @@ class Move:
 
     RowtoRank = {8-i:chr(ord('0')+i) for i in range(8)}
     RanktoRow = {y:x for x,y in RowtoRank.items()}
-    FiletoCol = {chr(ord('a')+i):i for i in range(7)}
+    FiletoCol = {chr(ord('a')+i):i for i in range(8)}
     ColtoFile = {y:x for x,y in FiletoCol.items()}
 
 
     def __init__(self, startsq, endsq, board):    
         self.startrow, self.startcol = startsq[0], startsq[1]
         self.endrow, self.endcol = endsq[0], endsq[1]
-        self.pieceCaptured = board[self.startrow][self.startcol]
+        self.pieceCaptured = board[self.endrow][self.endcol]
         self.pieceMoved = board[self.startrow][self.startcol]
 
     #change this later to real chess notation
