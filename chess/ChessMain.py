@@ -1,5 +1,6 @@
 import pygame as p
 import ChessEngine
+import time
 
 
 #TO DEFINE
@@ -61,9 +62,14 @@ def main():
                 if len(playerClicks) ==2:
                     move = ChessEngine.Move(playerClicks[0],playerClicks[1],gs.board)
                     print(move.getChessNotation())
-                    gs.makemove(move)
+                    gs.makemove(move)    
                     sqSelected = ()
                     playerClicks = []
+            elif e.type == p.KEYDOWN:
+                if e.key == p.K_z:
+                    gs.undomove()
+            
+
 
         
           

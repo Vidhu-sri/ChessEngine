@@ -29,6 +29,15 @@ class GameState:
         self.board[move.endrow][move.endcol] = move.pieceMoved
         self.movelog.append(move)
         self.whiteToMove = not self.whiteToMove
+    def undomove(self):
+        if not self.movelog:
+            return
+        move = self.movelog.pop()
+        self.board[move.endrow][move.endcol] = move.pieceCaptured
+        self.board[move.startrow][move.startcol] = move.pieceMoved
+        self.whiteToMove = not self.whiteToMove
+        
+        
     
 
 
