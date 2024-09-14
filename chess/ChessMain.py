@@ -8,7 +8,7 @@ import ChessEngine
 # - sq.size
 # - max fps
 # - global dictionary of images
-p.init()
+
 WIDTH = HEIGHT = 512
 DIMENSION = 8
 SQ_SIZE = WIDTH//DIMENSION
@@ -23,7 +23,7 @@ def loadImages():
 
 #driver code
 def main():
-
+    p.init()
     screen = p.display.set_mode((WIDTH,HEIGHT))
     clock = p.time.Clock()
     screen.fill(p.Color('white'))
@@ -40,10 +40,18 @@ def main():
                 running = False
             
             #try drag and drop also 
-            if e.type == p.MOUSEBUTTONDOWN:
+            elif e.type == p.MOUSEBUTTONDOWN:
                 pos = p.mouse.get_pos()
                 row = pos[1]//SQ_SIZE
                 col = pos[0]//SQ_SIZE
+
+                if len(playerClicks) == 1:
+                    initsq = playerClicks[-1]
+                    if gs.board[initsq[0]][initsq[1]] == '--':
+                        sqSelected = ()
+                        playerClicks = []
+                        continue
+                    
                 if (row,col) == sqSelected:
                     sqSelected = ()
                     playerClicks = []
@@ -56,14 +64,10 @@ def main():
                     gs.makemove(move)
                     sqSelected = ()
                     playerClicks = []
-                   
 
-
-
-
-
+        
+          
         drawGameState(screen,gs)
-        #drawPieces(screen,gs.board)
         clock.tick(MAX_FPS)
         p.display.flip()
 def drawGameState(screen,gs):
