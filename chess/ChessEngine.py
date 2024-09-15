@@ -21,6 +21,10 @@ class GameState:
                 ['--', '--', '--', '--', '--', '--', '--', '--'],
                 ['wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp'],
                 ['wR', 'wN', 'wB', 'wQ', 'wK', 'wB', 'wN', 'wR']]
+        
+        self.moveFunctions = {'p':self.getPawnMoves, 'R':self.getRookMoves, 'N':self.getKnightMoves,
+                              'B': self.getBishopMoves, 'Q': self.getQueenMoves, 'K':self.getKingMoves}
+
         self.whiteToMove = True
         self.movelog = []
 
@@ -52,14 +56,50 @@ class GameState:
                 if (turn == 'w' and self.whiteToMove) or (turn == 'b' and not self.whiteToMove):
                     piece = self.board[r][c][1]
                 
-                if piece == 'p':
-                    self.getPawnMoves(r,c,moves)
-                elif piece == 'R':
-                    self.getRookMoves(r,c,moves)
+                    self.moveFunctions[piece](r,c,moves) # calls the appropriate move functions
+        return moves
     
     def getPawnMoves(self, r, c, moves):
-        pass
+        
+        color = self.board[r][c][0]
+        ispiece = lambda r,c: (self.board[r][c] !='--')
+
+        # first pawn move
+        firstmove =  (color == 'b' and r == 1 and not self.whiteToMove) or (color == 'w' and r== 6 and self.whiteToMove)
+        
+        direction = -1 if color == 'w' else 1
+
+        if 0<=r+direction<=7  and not ispiece(r+direction,c):
+            moves.append(Move((r,c),(r+direction,c), self.board)) 
+
+        if firstmove and not ispiece(r+2*direction,c):
+                moves.append(Move((r,c), (r+2*direction,c) , self.board)) 
+    
+        # killing
+    
+        next = r-1 if color == 'w' else r+1
+        for i in (-1,1):
+            if 0<=next<=7 and 0<=c+i<=7 and ispiece(next,c+i) and self.board[next][c+i][0] != color:
+                moves.append(Move((r,c),(next,c+i), self.board))
+
+
+        #119-w, 98 - b
+
+        #en passant
+        # 
+
+       
+        
     def getRookMoves(self,r,c,moves):
+        pass
+
+    def getKnightMoves(self,r,c,moves):
+        pass
+    def getBishopMoves(self,r,c,moves):
+        pass
+    def getKingMoves(self,r,c,moves):
+        pass
+    def getQueenMoves(self,r,c,moves):
         pass
                 
 
@@ -72,7 +112,8 @@ class GameState:
 
 class Move:
 
-    RowtoRank = {8-i:chr(ord('0')+i) for i in range(8)}
+
+    RowtoRank = {7-i:chr(ord('0')+i) for i in range(8)}
     RanktoRow = {y:x for x,y in RowtoRank.items()}
     FiletoCol = {chr(ord('a')+i):i for i in range(8)}
     ColtoFile = {y:x for x,y in FiletoCol.items()}
