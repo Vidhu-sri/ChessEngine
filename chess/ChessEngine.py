@@ -29,6 +29,8 @@ class GameState:
         self.board[move.endrow][move.endcol] = move.pieceMoved
         self.movelog.append(move)
         self.whiteToMove = not self.whiteToMove
+
+    #undo the last move made
     def undomove(self):
         if not self.movelog:
             return
@@ -37,6 +39,30 @@ class GameState:
         self.board[move.startrow][move.startcol] = move.pieceMoved
         self.whiteToMove = not self.whiteToMove
         
+    def getValidMoves(self):
+        return self.getAllPossibleMoves()
+    
+    def getAllPossibleMoves(self):
+        moves = []
+
+        for r in range(len(self.board)):
+            for c in range(len(self.board[0])):
+                turn = self.board[r][c][0]
+
+                if (turn == 'w' and self.whiteToMove) or (turn == 'b' and not self.whiteToMove):
+                    piece = self.board[r][c][1]
+                
+                if piece == 'p':
+                    self.getPawnMoves(r,c,moves)
+                elif piece == 'R':
+                    self.getRookMoves(r,c,moves)
+    
+    def getPawnMoves(self, r, c, moves):
+        pass
+    def getRookMoves(self,r,c,moves):
+        pass
+                
+
         
     
 
@@ -57,6 +83,17 @@ class Move:
         self.endrow, self.endcol = endsq[0], endsq[1]
         self.pieceCaptured = board[self.endrow][self.endcol]
         self.pieceMoved = board[self.startrow][self.startcol]
+        self.moveID = self.startrow*1000 + self.startcol*100 + self.endrow*10 + self.endcol
+
+
+    '''
+    Overriding the equals method
+    '''
+    def __eq__(self,other):
+        if isinstance(other, Move):
+            return self.moveID == other.moveID
+        return False
+
 
     #change this later to real chess notation
     def getChessNotation(self):
