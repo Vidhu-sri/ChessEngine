@@ -69,7 +69,7 @@ class GameState:
         
         direction = -1 if color == 'w' else 1
 
-        if 0<=r+direction<=7  and not ispiece(r+direction,c):
+        if r+direction<=7  and not ispiece(r+direction,c):
             moves.append(Move((r,c),(r+direction,c), self.board)) 
 
         if firstmove and not ispiece(r+2*direction,c):
@@ -91,7 +91,39 @@ class GameState:
        
         
     def getRookMoves(self,r,c,moves):
-        pass
+        
+        ispiece = lambda r,c: self.board[r][c] != '--'
+
+        i = 1
+        #same file
+        for i in range(r+1,8):
+            if ispiece(i,c):
+                break
+            moves.append(Move((r,c), (i,c), self.board))
+        moves.append(Move((r,c), (i,c), self.board))  #capture
+        
+
+        for i in range(r-1,-1,-1):
+            if ispiece(i,c):
+                break
+            moves.append(Move((r,c), (i,c), self.board))
+        moves.append(Move((r,c), (i,c), self.board))  #capture
+       
+        
+        #same rank
+        for i in range(c+1,8):
+            if ispiece(r,i):
+                break
+            moves.append(Move((r,c), (r,i), self.board))
+        moves.append(Move((r,c), (r,i), self.board))    #capture
+
+        for i in range(c-1,-1,-1):
+            if ispiece(r,i):
+                break
+            moves.append(Move((r,c), (r,i), self.board))
+        moves.append(Move((r,c), (r,i), self.board))    #capture
+        
+
 
     def getKnightMoves(self,r,c,moves):
         pass
