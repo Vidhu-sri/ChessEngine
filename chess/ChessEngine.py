@@ -9,6 +9,7 @@
 #whose turn is it
 #movelog
 #can castle?
+import itertools
 
 class GameState:
     def __init__(self):
@@ -27,7 +28,7 @@ class GameState:
 
         self.whiteToMove = True
         self.movelog = []
-
+        self.ispiece = lambda r,c: self.board[r][c] != '--'
     def makemove(self, move):
         self.board[move.startrow][move.startcol] = '--'
         self.board[move.endrow][move.endcol] = move.pieceMoved
@@ -62,24 +63,24 @@ class GameState:
     def getPawnMoves(self, r, c, moves):
         
         color = self.board[r][c][0]
-        ispiece = lambda r,c: (self.board[r][c] !='--')
+        
 
         # first pawn move
         firstmove =  (color == 'b' and r == 1 and not self.whiteToMove) or (color == 'w' and r== 6 and self.whiteToMove)
         
         direction = -1 if color == 'w' else 1
 
-        if r+direction<=7  and not ispiece(r+direction,c):
+        if r+direction<=7  and not self.ispiece(r+direction,c):
             moves.append(Move((r,c),(r+direction,c), self.board)) 
 
-        if firstmove and not ispiece(r+2*direction,c):
+        if firstmove and not self.ispiece(r+2*direction,c):
                 moves.append(Move((r,c), (r+2*direction,c) , self.board)) 
     
         # killing
     
         next = r-1 if color == 'w' else r+1
         for i in (-1,1):
-            if 0<=next<=7 and 0<=c+i<=7 and ispiece(next,c+i) and self.board[next][c+i][0] != color:
+            if 0<=next<=7 and 0<=c+i<=7 and self.ispiece(next,c+i) and self.board[next][c+i][0] != color:
                 moves.append(Move((r,c),(next,c+i), self.board))
 
 
@@ -92,13 +93,13 @@ class GameState:
         
     def getRookMoves(self,r,c,moves):
         
-        ispiece = lambda r,c: self.board[r][c] != '--'
+        
         color = self.board[r][c][0]
 
         i = 1
         #same file
         for i in range(r+1,8):
-            if ispiece(i,c):
+            if self.ispiece(i,c):
                 break
             moves.append(Move((r,c), (i,c), self.board))
         if self.board[i][c][0] != color:
@@ -106,7 +107,7 @@ class GameState:
         
 
         for i in range(r-1,-1,-1):
-            if ispiece(i,c):
+            if self.ispiece(i,c):
                 break
             moves.append(Move((r,c), (i,c), self.board))
         if self.board[i][c][0] != color:
@@ -115,34 +116,34 @@ class GameState:
         
         #same rank
         for i in range(c+1,8):
-            if ispiece(r,i):
+            if self.ispiece(r,i):
                 break
             moves.append(Move((r,c), (r,i), self.board))
         if self.board[r][i][0] != color:
             moves.append(Move((r,c), (r,i), self.board))    #capture
 
         for i in range(c-1,-1,-1):
-            if ispiece(r,i):
+            if self.ispiece(r,i):
                 break
             moves.append(Move((r,c), (r,i), self.board))
         if self.board[r][i][0] != color:
             moves.append(Move((r,c), (r,i), self.board))    #capture
         
-
+    
 
     def getKnightMoves(self,r,c,moves):
 
         color = self.board[r][c][0]
         reach = [(r+2,c+1), (r+2,c-1), (r-2,c+1), (r-2,c-1), (r+1,c+2), (r-1,c+2), (r+1,c-2), (r-1,c-2)]
         withinboard = lambda r,c: (0<=r<=7 and 0<=c<=7)
-        ispiece = lambda r,c : self.board[r][c] != '--'
+        
 
 
         for move in reach:
             if withinboard(move[0], move[1]):
-                if not ispiece(move[0], move[1]):
+                if not self.ispiece(move[0], move[1]):
                     moves.append(Move((r,c), move, self.board))
-                elif ispiece(move[0], move[1]) and self.board[move[0]][move[1]][0] != color:
+                elif self.ispiece(move[0], move[1]) and self.board[move[0]][move[1]][0] != color:
                     moves.append(Move((r,c), move, self.board))
 
                     
@@ -150,11 +151,42 @@ class GameState:
 
 
     def getBishopMoves(self,r,c,moves):
-        pass
+        
+        directions = [(1,-1), (-1,1), (1,1), (-1,-1)]
+        withinboard = lambda r,c: (0<=r<=7 and 0<=c<=7)
+        color = self.board[r][c][0]
+
+        for dir in directions:
+            i = 1
+            while withinboard(r+dir[0]*i, c+dir[1]*i) and not self.ispiece(r+dir[0]*i, c+dir[1]*i):
+                moves.append(Move((r,c), (r+dir[0]*i, c+dir[1]*i), self.board))
+                i+=1
+            if withinboard(r+dir[0]*i, c+dir[1]*i) and self.board[r+dir[0]*i][c+dir[1]*i][0] != color:
+                moves.append(Move((r,c), (r+dir[0]*i, c+dir[1]*i), self.board))
+    
+
+
     def getKingMoves(self,r,c,moves):
-        pass
+
+        directions = [*itertools.product((0,1,-1), repeat=2)]
+        withinboard = lambda r,c: (0<=r<=7 and 0<=c<=7)
+        color = self.borad[r][c]
+        directions.pop(0)
+
+        for dir in directions:
+            if withinboard(r+dir[0], c+dir[1]):
+                if not self.ispiece(r+dir[0], c+dir[1]):
+                    moves.append(Move((r,c), (r+dir[0], c+dir[1]), self.board))
+                elif self.board[r+dir[0]][c+dir[1]][0] != color:
+                    moves.append(Move((r,c), (r+dir[0], c+dir[1]), self.board))
+
+
+
+        
     def getQueenMoves(self,r,c,moves):
-        pass
+        self.getBishopMoves(r,c,moves)
+        self.getRookMoves(r,c,moves)
+
                 
 
         
