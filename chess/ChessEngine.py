@@ -84,10 +84,16 @@ class GameState:
                 moves.append(Move((r,c),(next,c+i), self.board))
 
 
-        #119-w, 98 - b
-
         #en passant
-        # 
+        if color == 'b' and r == 4:
+            move = self.movelog[-1]
+            if abs(move.endcol - c) == 1 and move.endrow == r:
+                moves.append(Move((r,c),(move.endrow+1,move.endcol), self.board))
+        if color == 'w' and r == 3:
+            move = self.movelog[-1]
+            if abs(move.endcol - c) == 1 and move.endrow == r:
+                moves.append(Move((r,c),(move.endrow-1,move.endcol), self.board))
+
 
        
         
@@ -188,11 +194,6 @@ class GameState:
         self.getRookMoves(r,c,moves)
 
                 
-
-        
-    
-
-
 
 
 
