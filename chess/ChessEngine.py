@@ -176,7 +176,7 @@ class GameState:
 
         directions = [*itertools.product((0,1,-1), repeat=2)]
         withinboard = lambda r,c: (0<=r<=7 and 0<=c<=7)
-        color = self.borad[r][c]
+        color = self.board[r][c]
         directions.pop(0)
 
         for dir in directions:
