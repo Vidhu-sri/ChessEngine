@@ -29,11 +29,21 @@ class GameState:
         self.whiteToMove = True
         self.movelog = []
         self.ispiece = lambda r,c: self.board[r][c] != '--'
+        self.whiteKingLocation = (7,4)
+        self.blackKingLocation = (0,4)
+
+
+
     def makemove(self, move):
         self.board[move.startrow][move.startcol] = '--'
         self.board[move.endrow][move.endcol] = move.pieceMoved
         self.movelog.append(move)
         self.whiteToMove = not self.whiteToMove
+        #update the king's location if moved
+        if move.pieceMoved =='wK':
+            self.whiteKingLocation = (move.endrow,move.endcol)
+        if move.pieceMoved == 'bK':
+            self.blackKingLocation = (move.endrow,move.endcol)
 
     #undo the last move made
     def undomove(self):
@@ -43,9 +53,50 @@ class GameState:
         self.board[move.endrow][move.endcol] = move.pieceCaptured
         self.board[move.startrow][move.startcol] = move.pieceMoved
         self.whiteToMove = not self.whiteToMove
-        
+        #update the king's position if required
+        if move.pieceMoved =='wK':
+            self.whiteKingLocation = (move.startrow,move.startcol)
+        if move.pieceMoved == 'bK':
+            self.blackKingLocation = (move.startrow,move.startcol)
+
+    
+    #generate all possible moves
+    #for each move, make the move
+    #generate all possible opponent's moves
+    #for each of your oppenent's moves, see if they attack your king
+    # if they attack your king, not a valid move
     def getValidMoves(self):
-        return self.getAllPossibleMoves()
+        moves =  self.getAllPossibleMoves()
+        for i in range(len(moves)-1,-1,-1):
+            self.makemove(moves[i])
+
+            self.whiteToMove = not self.whiteToMove
+            if self.inCheck():
+                moves.remove(moves[i])
+            self.whiteToMove = not self.whiteToMove
+            self.undomove()
+        return moves
+
+
+
+    def inCheck(self):
+        
+        if self.whiteToMove:
+            return self.squareUnderAttack(self.whiteKingLocation[0],self.whiteKingLocation[1])
+        else:
+            return self.squareUnderAttack(self.blackKingLocation[0], self.blackKingLocation[1])
+    
+    def squareUnderAttack(self,r,c):
+        self.whiteToMove = not self.whiteToMove
+        oppMoves = self.getAllPossibleMoves()
+        self.whiteToMove = not self.whiteToMove
+        for move in oppMoves:
+            if move.endrow == r and move.endcol == c:
+                return True
+        return False
+
+
+
     
     def getAllPossibleMoves(self):
         moves = []
