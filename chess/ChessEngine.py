@@ -31,6 +31,8 @@ class GameState:
         self.ispiece = lambda r,c: self.board[r][c] != '--'
         self.whiteKingLocation = (7,4)
         self.blackKingLocation = (0,4)
+        self.checkMate = False
+        self.staleMate = False
 
 
 
@@ -75,6 +77,14 @@ class GameState:
                 moves.remove(moves[i])
             self.whiteToMove = not self.whiteToMove
             self.undomove()
+        if not moves:
+            if self.isCheck():
+                self.checkMate = True
+            else:
+                self.staleMate = True
+        else:
+            self.checkMate = False
+            self.staleMate = False
         return moves
 
 

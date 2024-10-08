@@ -73,7 +73,7 @@ def main():
                         sqSelected = ()
                         playerClicks = []
                     else:
-                        playerClick  = [sqSelected]
+                        playerClicks  = []
                         
             elif e.type == p.KEYDOWN:
                 if e.key == p.K_z:
